@@ -13,12 +13,10 @@ public class Constants {
         //Speed/Acceleration Limits
         public static final double MAX_LINEAR_SPEED = 2.0; //Inches/Second
         public static final double MAX_ANGULAR_SPEED = 1.0; //Radians/Second
-        public static final double MAX_LINEAR_ACCELERATION = 6.0; //Inches/Second^2
-        public static final double MAX_ANGULAR_ACCELERATION = 2.0; //Radians/Second^2
+        public static final double MAX_LINEAR_ACCELERATION = 8.0; //Inches/Second^2
+        public static final double MAX_ANGULAR_ACCELERATION = 6.0; //Radians/Second^2
 
-        //The wheels' offset from the robot. Track width is how long; wheel base is how wide
-        public static final double TRACK_WIDTH = 15.0; //Inches
-        public static final double WHEEL_BASE =  15.0; //Inches
+        public static final int MOTOR_MAX_VELOCITY = 1800; //Ticks/Second
 
         // Constants for motor names used in the configuration
         public static final String LEFT_FRONT_DRIVE_MOTOR_NAME = "lfMotor";    // Name for the left front motor
@@ -129,10 +127,8 @@ public class Constants {
 
             if (adjustedLinearSlidePosition < 1000) {
                 return 0;
-            } else if (adjustedLinearSlidePosition < 2750) {
+            } else  {
                 return 0.00001*adjustedLinearSlidePosition-0.01;
-            } else {
-                return 1;
             }
 
         }

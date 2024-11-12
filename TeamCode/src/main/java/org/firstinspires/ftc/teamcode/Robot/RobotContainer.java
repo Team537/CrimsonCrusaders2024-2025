@@ -68,7 +68,7 @@ public class RobotContainer {
 
     public void scheduleCommand() {
         getManualDriveSubsystemCommand().schedule();
-        getManualArmSubsystemCommand().schedule();
+        //getManualArmSubsystemCommand().schedule();
         //getManualManipulatorSubsystemCommand().schedule();
     }
 
@@ -80,7 +80,8 @@ public class RobotContainer {
         );
     }
 
-    private CommandBase getManualArmSubsystemCommand() {
+    private CommandBase
+    getManualArmSubsystemCommand() {
         return new RunCommand(
             () -> {
                 armSubsystem.armFromGamepad(opMode.gamepad1);

@@ -82,6 +82,43 @@ public class DriveSubsystem extends Subsystem {
         drive(linearSpeed.times(Constants.Drive.MAX_LINEAR_SPEED),angularSpeed*Constants.Drive.MAX_ANGULAR_SPEED);
     }
 
+    public void testWheelsFromGamepad(Gamepad gamepad) {
+        // Control left front motor with gamepad 'a'
+        if (gamepad.a) {
+            leftFrontMotor.setVelocity(2000);
+        } else {
+            leftFrontMotor.setVelocity(0);
+        }
+
+// Control right front motor with gamepad 'b'
+        if (gamepad.b) {
+            rightFrontMotor.setVelocity(2000);
+        } else {
+            rightFrontMotor.setVelocity(0);
+        }
+
+// Control left back motor with gamepad 'x'
+        if (gamepad.x) {
+            leftBackMotor.setVelocity(2000);
+        } else {
+            leftBackMotor.setVelocity(0);
+        }
+
+// Control right back motor with gamepad 'y'
+        if (gamepad.y) {
+            rightBackMotor.setVelocity(2000);
+        } else {
+            rightBackMotor.setVelocity(0);
+        }
+
+        Robot.getInstance().opMode.telemetry.addData("lfSpeed", leftFrontMotor.getVelocity());
+        Robot.getInstance().opMode.telemetry.addData("rfSpeed", rightFrontMotor.getVelocity());
+        Robot.getInstance().opMode.telemetry.addData("lbSpeed", leftBackMotor.getVelocity());
+        Robot.getInstance().opMode.telemetry.addData("rbSpeed", rightBackMotor.getVelocity());
+
+
+
+    }
     public void drive(Vector2d targetLinearSpeed, double targetAngularSpeed) {
 
         Vector2d unitLinearSpeed = targetLinearSpeed.div(Constants.Drive.MAX_LINEAR_SPEED);
@@ -125,15 +162,15 @@ public class DriveSubsystem extends Subsystem {
         cosinePivot = angularSpeed * ((1 - mag) + 2 * mag * Math.pow(Math.cos(angle),2));
         sinePivot = angularSpeed * ((1 - mag) + 2 * mag * Math.pow(Math.sin(angle),2));
 
-        Robot.getInstance().opMode.telemetry.addData("lf", cosineMove + cosinePivot);
-        Robot.getInstance().opMode.telemetry.addData("rf", sineMove - sinePivot);
-        Robot.getInstance().opMode.telemetry.addData("lb", sineMove + sinePivot);
-        Robot.getInstance().opMode.telemetry.addData("rb", cosineMove - cosinePivot);
+        double leftFrontVelocity = cosineMove + cosinePivot;
+        double rightFrontVelocity = sineMove - sinePivot;
+        double leftBackVelocity = sineMove + sinePivot;
+        double rightBackVelocity = cosineMove - cosinePivot;
 
-        leftFrontMotor.setPower(cosineMove + cosinePivot);
-        rightFrontMotor.setPower(sineMove - sinePivot);
-        leftBackMotor.setPower(sineMove + sinePivot);
-        rightBackMotor.setPower(cosineMove - cosinePivot);
+        leftFrontMotor.setVelocity(Constants.Drive.MOTOR_MAX_VELOCITY * leftFrontVelocity);
+        rightFrontMotor.setVelocity(Constants.Drive.MOTOR_MAX_VELOCITY * rightFrontVelocity);
+        leftBackMotor.setVelocity(Constants.Drive.MOTOR_MAX_VELOCITY * leftBackVelocity);
+        rightBackMotor.setVelocity(Constants.Drive.MOTOR_MAX_VELOCITY * rightBackVelocity);
 
     }
 
