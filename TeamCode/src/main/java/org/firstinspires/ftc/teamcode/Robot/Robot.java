@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Robot;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Utilities.Alliance;
 import org.firstinspires.ftc.teamcode.Utilities.CommandSystem.CommandScheduler;
 import org.firstinspires.ftc.teamcode.Utilities.Constants;
 
@@ -73,6 +74,7 @@ public class Robot {
      */
     private void robotPeriodic() {
         CommandScheduler.getInstance().run();
+        robotContainer.settings();
         opMode.telemetry.update();
     }
 
@@ -87,7 +89,18 @@ public class Robot {
      * Runs initially while the robot is active
      */
     private void robotActiveInit() {
-        robotContainer.scheduleCommand();
+        switch (opModeType) {
+            case TELE_OP:
+                robotContainer.scheduleTeleOpCommands();
+                break;
+            case AUTO:
+                robotContainer.scheduleAutonomousCommands();
+                break;
+            case PRE_MATCH_INIT:
+                robotContainer.preMatchInit();
+                break;
+        }
+
     }
 
     /**

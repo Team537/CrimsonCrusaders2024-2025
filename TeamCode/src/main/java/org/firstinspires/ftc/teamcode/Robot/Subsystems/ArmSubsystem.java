@@ -43,12 +43,16 @@ public class ArmSubsystem extends Subsystem {
         shoulderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+    }
+
+    /**
+     * sets the arm positions to zero
+     */
+    public void resetArmPositions() {
         shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         linearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shoulderMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
     }
 
     /**
@@ -107,15 +111,10 @@ public class ArmSubsystem extends Subsystem {
             armPosition = Constants.ArmPosition.CLIMB;
         }
 
-        if (gamepad.left_trigger > 0.9) {
-            linearSlidePosition += 1;
-        }
-        if (gamepad.right_trigger > 0.9) {
-            linearSlidePosition -= 1;
-        }
+    }
 
-        periodic();
-
+    public void setArmPosition(Constants.ArmPosition armPosition) {
+        this.armPosition = armPosition;
     }
 
     public void armPowerTest(Gamepad gamepad) {
@@ -149,6 +148,12 @@ public class ArmSubsystem extends Subsystem {
     }
 
 
+    public int getShoulderPosition() {
+        return shoulderMotor.getCurrentPosition();
+    }
+    public int getLinearSlidePosition() {
+        return linearSlideMotor.getCurrentPosition();
+    }
 
     public void periodic() {
 
@@ -157,12 +162,19 @@ public class ArmSubsystem extends Subsystem {
             previousArmPosition = armPosition;
         }
 
-        double armFValue = Constants.Arm.getArmFValue(shoulderMotor.getCurrentPosition(),linearSlideMotor.getCurrentPosition());
+        double armFValue;
+        //find the feedforward value, will be used later
+        if (armPosition == Constants.ArmPosition.BASKET_TWO || shoulderMotor.getCurrentPosition() < 750) {
+            armFValue = Constants.Arm.getArmFValue(shoulderMotor.getCurrentPosition(), linearSlideMotor.getCurrentPosition());
+        } else {
+            armFValue = 0.0;
+        }
 
         shoulderMotor.setPower(
             (1 - armFValue) * Math.tanh(shoulderPID.calculate(previousArmPosition.SHOULDER_POSITION - shoulderMotor.getCurrentPosition())) + armFValue
         );
 
+        //Set the linear slide to retract if the shoulder hasn't reached it's position yet
         if (Math.abs(armPosition.SHOULDER_POSITION - shoulderMotor.getCurrentPosition()) < 40) {
             linearSlideMotor.setPower(Math.tanh(
                 linearSlidePID.calculate(armPosition.LINEAR_SLIDE_POSITION - linearSlideMotor.getCurrentPosition())

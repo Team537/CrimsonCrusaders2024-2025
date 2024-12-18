@@ -10,7 +10,6 @@ public class PID {
 
     public double lastError = 0;
     public double lastTime = 0;
-
     public double integral;
     public double derivative;
     public double out;
